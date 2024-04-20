@@ -1,0 +1,45 @@
+/* For desktop: */
+.sidebar {
+  text-decoration: white;
+  margin: 0;
+  padding: 0;
+  background-color: lightblue;
+  color: white;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 999;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 80px; /* Increase the height of the navbar */
+}
+
+.sidebar a {
+  color: white;
+  padding: 16px;
+  text-decoration: none;
+  flex-grow: 1; /* Make the links take up equal space */
+  text-align: center; /* Center the text within the links */
+}
+
+.sidebar a:hover,
+.sidebar a.active {
+  background-color: #011222;
+  color: white;
+  border-radius: 30px;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .sidebar {
+    position: relative;
+    height: auto;
+    flex-direction: column; /* Stack the links vertically */
+  }
+
+  .sidebar a {
+    padding: 8px; /* Reduce padding */
+    font-size: 14px; /* Reduce font size */
+  }
+}
