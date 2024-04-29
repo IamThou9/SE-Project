@@ -27,6 +27,9 @@ const SidebarConfig = {
     { label: 'Post Jobs', link: '/employer/postjobs' },
     { label: 'Review Applications', link: '/employer/reviewapplications' },
     { label: 'Manage Interviews', link: '/employer/manageinterviews' },
+    { label: 'Employer Profile', link: '/employer/employerprofile' },
+    { label: 'Reserve Booth', link: '/employer/reservebooth' },
+    { label: 'Manage Mockup', link: '/employer/managemockup' },
     { label: 'Logout', link: '/logout', onClick: handleLogout }, // Add the onClick event
   ]
 };
