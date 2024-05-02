@@ -40,13 +40,17 @@ CREATE TABLE Booth (
 
 -- Table: CandidateForm
 CREATE TABLE CandidateForm (
-    CadID int  NOT NULL AUTO_INCREMENT,
-    Name varchar(100)  NOT NULL,
-    email varchar(100)  NOT NULL,
-    resume blob  NOT NULL,
-    ApplicationForm_ApplicationID int  NOT NULL,
-    CONSTRAINT CandidateForm_pk PRIMARY KEY (CadID)
-)AUTO_INCREMENT=1;
+    CadID int NOT NULL AUTO_INCREMENT,
+    Name varchar(100) NOT NULL,
+    email varchar(100) NOT NULL,
+    resume blob NOT NULL,
+    ApplicationForm_ApplicationID int NOT NULL,
+    studentID int NOT NULL,
+    approved_status boolean DEFAULT FALSE,
+    CONSTRAINT CandidateForm_pk PRIMARY KEY (CadID),
+    CONSTRAINT CandidateForm_fk1 FOREIGN KEY (studentID) REFERENCES Student(StdID),
+    CONSTRAINT CandidateForm_fk2 FOREIGN KEY (ApplicationForm_ApplicationID) REFERENCES ApplicationForm(ApplicationID)
+);
 
 -- Table: Comments
 CREATE TABLE Comments (
