@@ -9,6 +9,8 @@ import ManageInterviews from './manageinterviews';
 import EmployerProfile from './employerprofile';
 import ReserveBooth from './reservebooth';
 import ManageMockup from './managemockup';
+import JobForm from './JobForm';
+
 const EmployerRoutes = () => {
   return (
     <Routes>
@@ -16,6 +18,7 @@ const EmployerRoutes = () => {
       <Route path="employerlogin" element={<EmployerLogin />} />
       <Route path="employersignup" element={<EmployerSignup />} />
       <Route path="postjobs" element={<PostJobs />} />
+      <Route path="JobForm" element={<JobForm />} /> {/* Updated route */}
       <Route path="reviewapplications" element={<ReviewApplications />} />
       <Route path="manageinterviews" element={<ManageInterviews />} />
       <Route path="employerprofile" element={<EmployerProfile />} />

@@ -64,8 +64,10 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from '../../components/Sidebar';
 import './employeerstyling/employeer_card.css';
 import './employeerstyling/employeer_form.css';
+import './employeerstyling/up_button.css';
 import { Button, Modal, Form } from 'react-bootstrap';
 import { FaPlus } from 'react-icons/fa';
+import FileIcon from '../../images/filecon.jpg';
 
 const ManageMockup = () => {
   const [mockups, setMockups] = useState([]);
@@ -130,31 +132,35 @@ const ManageMockup = () => {
   return (
     <>
       <Sidebar role="employer" />
-      <div className="container">
+      <div className="up_button-container">
         <div className="d-flex justify-content-end mb-3">
           <Button variant="primary" onClick={() => setShowModal(true)} className="add-mockup-btn">
             <FaPlus /> Add Mock-up Interview
           </Button>
         </div>
+        </div>
         {noMockups ? (
           <p>No mock-up interviews available.</p>
         ) : (
-          <div className="row">
+          <div className="card-container d-flex flex-wrap justify-content-center">
             {mockups.map(mockup => (
-              <div key={mockup.mockID} className="col-md-4 mb-4">
-                <div className="card">
+              <div key={mockup.mockID} className="card m-3">
+                <div className="card-image">
+            <img className="object-cover" src={FileIcon} alt="Job Image" />
+          </div>
+                
                   <div className="card-content">
                     <h2 className="card-title">{mockup.jobTitle}</h2>
                     <a href={`${mockup.questionsFile}`} target="_blank" rel="noopener noreferrer" className="btn">
                       View Questions
                     </a>
                   </div>
-                </div>
+                
               </div>
             ))}
           </div>
         )}
-      </div>
+     
 
       {/* Modal for adding new mock-up interview */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered backdrop="static" keyboard={false}>

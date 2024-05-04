@@ -35,7 +35,7 @@ const StudentLogin = () => {
     } catch (error) {
       console.error('Error:', error)
     }
-  }
+  };
 
   return (
     <div
