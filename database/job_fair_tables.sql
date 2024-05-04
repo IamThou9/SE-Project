@@ -24,6 +24,7 @@ CREATE TABLE Assign_Interview (
     Employeer_EmpID int  NOT NULL,
     Student_StdID int  NOT NULL,
     Interview_InterviewID int  NOT NULL,
+    Complete_Status boolean DEFAULT FALSE,
     CONSTRAINT Assign_Interview_pk PRIMARY KEY (Employeer_EmpID,Student_StdID,Interview_InterviewID)
 );
 
@@ -93,6 +94,7 @@ CREATE TABLE Jobs (
     StartDate datetime  NOT NULL,
     Status bool  NOT NULL,
     Employeer_EmpID int  NOT NULL,
+    JobDescription varchar(200) NULL,
     CONSTRAINT Jobs_pk PRIMARY KEY (OfferID)
 )AUTO_INCREMENT=100;
 
@@ -124,6 +126,15 @@ CREATE TABLE provide_feedback (
     Student_StdID int  NOT NULL,
     CONSTRAINT provide_feedback_pk PRIMARY KEY (Employeer_EmpID,Feedback_feedbackID,Student_StdID)
 );
+
+--Admin table
+CREATE TABLE Admin (
+    AdminID int NOT NULL AUTO_INCREMENT,
+    email varchar(100) NOT NULL,
+    password varchar(100) NOT NULL,
+    CONSTRAINT Admin_pk PRIMARY KEY (AdminID)
+)AUTO_INCREMENT=1;
+
 
 -- foreign keys
 -- Reference: ApplicationForm_Jobs (table: ApplicationForm)
