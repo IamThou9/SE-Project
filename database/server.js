@@ -727,6 +727,46 @@ app.post('/api/application_stud', uploadResume.single('resume'), (req, res) => {
 //------------------------------------------------------------------------------------------------------------------------------------------//
 //------------------------------------------------------------------------------------------------------------------------------------------//
 
+//------------------------------------------------------Student JobStatus-------------------------------------------------------------------//
+app.get('/api/student/:studentId/applications', (req, res) => {
+  const studentId = req.params.studentId;
+
+  const query = `
+  SELECT
+  c.CadID,
+  j.jobTitle,
+  j.Status,
+  e.CompanyName,
+  e.Name AS EmployerName,
+  f.comment,
+  b.Block,
+  b.Number
+FROM
+  CandidateForm c
+  JOIN ApplicationForm af ON c.ApplicationForm_ApplicationID = af.ApplicationID
+  JOIN Jobs j ON af.Jobs_OfferID = j.OfferID
+  JOIN Employeer e ON j.Employeer_EmpID = e.EmpID
+  LEFT JOIN provide_feedback pf ON pf.Student_StdID = c.studentID
+  LEFT JOIN Feedback f ON pf.Feedback_feedbackID = f.feedbackID
+  LEFT JOIN Assign_Interview ai ON ai.Student_StdID = c.studentID
+  LEFT JOIN Booth b ON ai.Employeer_EmpID = b.Employeer_EmpID
+WHERE
+  c.studentID = ?;
+  `;
+
+  db.query(query, [studentId], (error, result) => {
+    if (error) {
+      console.error('Error fetching student application data:', error);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+
+    if (result.length === 0) {
+      return res.status(404).json({ error: 'Application data not found' });
+    }
+
+    res.json(result[0]);
+  });
+});
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -5,16 +5,20 @@ import './adminstyling/admin_login.css';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({ email: '', password: '' });
+  const [isAgreed, setIsAgreed] = useState(false); // New state variable
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
+  const handleAgreementChange = e => {
+    setIsAgreed(e.target.checked);
+  }
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(formData);
-
+  
     // Perform admin login logic, send a request to the server
     try {
       const response = await fetch('http://localhost:8081/api/admin/login', {
@@ -24,9 +28,9 @@ const AdminLogin = () => {
         },
         body: JSON.stringify(formData),
       });
-
+  
       const data = await response.json();
-
+  
       if (data.success) {
         // Login successful, navigate to the admin dashboard
         localStorage.setItem('user', JSON.stringify(data.user))
@@ -34,6 +38,7 @@ const AdminLogin = () => {
       } else {
         // Login failed, display an error message
         console.error(data.message);
+        alert('Incorrect email or password'); // Show an alert
       }
     } catch (error) {
       console.error('Error logging in:', error);
@@ -70,7 +75,15 @@ const AdminLogin = () => {
               onChange={handleChange}
             />
           </Form.Group>
-          <Button type="submit" className="login-button">
+          <Form.Group className='inputForm'>
+            <Form.Check 
+              type='checkbox' 
+              checked={isAgreed} 
+              onChange={handleAgreementChange}
+              label="I agree to terms and services"
+            />
+          </Form.Group>
+          <Button type="submit" className="login-button" disabled={!isAgreed}>
             Login
           </Button>
         </Form>
