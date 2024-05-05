@@ -68,7 +68,7 @@ const ReserveBooth = () => {
       <Sidebar role="employer" />
       <div style={{ marginTop: '100px' }}>
         <h2>Reserve Booth</h2>
-        <Table striped bordered hover>
+        <Table striped bordered hover className="employer-table">
           <thead>
             <tr>
               <th>Block</th>
