@@ -9,38 +9,73 @@ const EmployerSignup = () => {
     email: '',
     password: '',
     companyType: '',
-    companyName: '' 
+    companyName: ''
   })
+  const [isAgreed, setIsAgreed] = useState(false)
+  const [passwordError, setPasswordError] = useState('')
   const navigate = useNavigate()
 
-  const handleChange = e => {
-    setFormData({ ...formData, [e.target.id]: e.target.value })
+  const validatePassword = password => {
+    const re =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/
+    return re.test(password)
   }
 
+  const handleChange = e => {
+    if (e.target.id === 'password') {
+      if (!validatePassword(e.target.value)) {
+        setPasswordError(
+          'Password must be at least 8 characters, include an uppercase letter, a number, and a special character'
+        )
+      }else {
+        setPasswordError('')
+      }
+    }
+    else if(e.target.id === 'username') {
+          //if target.id is username then check if the value is only alphabets
+      if(!/^[a-zA-Z]+$/.test(e.target.value)){
+        alert('Only alphabets are allowed');
+        e.target.value = "";
+        return;
+      }
+      }
+
+    setFormData({ ...formData, [e.target.id]: e.target.value })
+  }
+  const handleAgreementChange = e => {
+    setIsAgreed(e.target.checked)
+  }
   const handleSubmit = async e => {
     e.preventDefault()
-    console.log(formData)
 
-    try {
-      const response = await fetch(
-        'http://localhost:8081/api/employer/signup',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(formData)
+    //Check if email is valid
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      alert('Invalid email address');
+      return;
+    }
+
+    if (!passwordError) {
+      try {
+        const response = await fetch(
+          'http://localhost:8081/api/employer/signup',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+          }
+        )
+        const data = await response.json()
+        if (data.success) {
+          navigate('/employer/employerlogin')
+        } else {
+          console.error(data.message)
         }
-      )
-      const data = await response.json()
-      if (data.success) {
-        console.log(data.message)
-        navigate('/employer/employerlogin')
-      } else {
-        console.log(data.message)
+      } catch (error) {
+        alert("An error occurred. Please try again later.")
+        console.error('Error:', error)
       }
-    } catch (error) {
-      console.error('Error:', error)
     }
   }
 
@@ -84,6 +119,7 @@ const EmployerSignup = () => {
               required
               onChange={handleChange}
             />
+            {passwordError && <div className='error'>{passwordError}</div>}
           </Form.Group>
           <Form.Group className='inputForm'>
             <Form.Label htmlFor='companyName'>Company Name</Form.Label>
@@ -124,12 +160,14 @@ const EmployerSignup = () => {
             </Form.Select>
           </Form.Group>
           <Form.Group className='inputForm'>
-            <Form.Check type='checkbox'>
-              <Form.Check.Input type='checkbox' isValid />
-              <Form.Check.Label>I agree to terms and services</Form.Check.Label>
-            </Form.Check>
+            <Form.Check
+              type='checkbox'
+              checked={isAgreed}
+              onChange={handleAgreementChange}
+              label='I agree to terms and services'
+            />
           </Form.Group>
-          <Button type='submit' className='login-button'>
+          <Button type='submit' className='login-button' disabled={!isAgreed}>
             Sign Up
           </Button>
         </Form>

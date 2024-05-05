@@ -19,11 +19,24 @@ CREATE TABLE ApplyFor (
     CONSTRAINT ApplyFor_pk PRIMARY KEY (Student_StdID,Jobs_OfferID)
 );
 
+-- Table: Student
+CREATE TABLE Student (
+    StdID int  NOT NULL AUTO_INCREMENT,
+    password varchar(100)  NOT NULL,
+    email varchar(100)  NOT NULL,
+    Name varchar(100)  NOT NULL,
+    GradYear int  NOT NULL,
+    major varchar(100)  NOT NULL,
+    Resume blob  NOT NULL,
+    CONSTRAINT Student_pk PRIMARY KEY (StdID)
+)AUTO_INCREMENT=100;
+
 -- Table: Assign_Interview
 CREATE TABLE Assign_Interview (
     Employeer_EmpID int  NOT NULL,
     Student_StdID int  NOT NULL,
     Interview_InterviewID int  NOT NULL,
+    Complete_Status boolean DEFAULT FALSE,
     CONSTRAINT Assign_Interview_pk PRIMARY KEY (Employeer_EmpID,Student_StdID,Interview_InterviewID)
 );
 
@@ -93,6 +106,7 @@ CREATE TABLE Jobs (
     StartDate datetime  NOT NULL,
     Status bool  NOT NULL,
     Employeer_EmpID int  NOT NULL,
+    JobDescription varchar(2048) NULL,
     CONSTRAINT Jobs_pk PRIMARY KEY (OfferID)
 )AUTO_INCREMENT=100;
 
@@ -105,18 +119,6 @@ CREATE TABLE MockUp_Interview (
     CONSTRAINT MockUp_Interview_pk PRIMARY KEY (mockID)
 )AUTO_INCREMENT=1;
 
--- Table: Student
-CREATE TABLE Student (
-    StdID int  NOT NULL AUTO_INCREMENT,
-    password varchar(100)  NOT NULL,
-    email varchar(100)  NOT NULL,
-    Name varchar(100)  NOT NULL,
-    GradYear int  NOT NULL,
-    major varchar(100)  NOT NULL,
-    Resume blob  NOT NULL,
-    CONSTRAINT Student_pk PRIMARY KEY (StdID)
-)AUTO_INCREMENT=100;
-
 -- Table: provide_feedback
 CREATE TABLE provide_feedback (
     Employeer_EmpID int  NOT NULL,
@@ -124,6 +126,15 @@ CREATE TABLE provide_feedback (
     Student_StdID int  NOT NULL,
     CONSTRAINT provide_feedback_pk PRIMARY KEY (Employeer_EmpID,Feedback_feedbackID,Student_StdID)
 );
+
+-- Admin table
+CREATE TABLE `ADMIN` (
+    AdminID int NOT NULL AUTO_INCREMENT,
+    email varchar(100) NOT NULL,
+    password varchar(100) NOT NULL,
+    CONSTRAINT Admin_pk PRIMARY KEY (AdminID)
+)AUTO_INCREMENT=1;
+
 
 -- foreign keys
 -- Reference: ApplicationForm_Jobs (table: ApplicationForm)

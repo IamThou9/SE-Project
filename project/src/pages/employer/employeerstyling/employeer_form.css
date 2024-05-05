@@ -1,3 +1,6 @@
+
+
+
 .modal-content {
   display: flex;
   flex-direction: column;
@@ -56,7 +59,7 @@
 .mockup_button:hover {
   background-color: #005f8c;
 }
-.job_container {
+/* .job_container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -76,7 +79,7 @@
 
 .job_button {
   margin-top: 1rem;
-}
+} */
 @media screen and (max-width: 600px) {
   .mockup_container {
     max-width: 100%;

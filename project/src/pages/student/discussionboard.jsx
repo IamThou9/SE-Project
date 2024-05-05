@@ -24,6 +24,12 @@ const DiscussionBoard = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    //Check if comment is empty
+    if (!comment) {
+      alert('Comment cannot be empty');
+      return;
+    }
+
     try {
       const response = await fetch('http://localhost:8081/api/comments', {
         method: 'POST',
