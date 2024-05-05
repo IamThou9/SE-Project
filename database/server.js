@@ -360,7 +360,7 @@ app.get('/api/employers', (req, res) => {
   });
 });
 
-
+//report
 app.get('/api/report', async (req, res) => {
   try {
     const pdfDoc = new pdfKit();
@@ -451,6 +451,47 @@ app.get('/api/report', async (req, res) => {
   }
 });
 
+// Manage Booths
+// GET all booths
+app.get('/api/admin_booths', (req, res) => {
+  const query = 'SELECT * FROM Booth';
+  db.query(query, (err, results) => {
+    if (err) {
+      console.error('Error fetching booths:', err);
+      return res.status(500).json({ error: 'Failed to fetch booths' });
+    }
+    res.json(results);
+  });
+});
+
+// DELETE a booth
+app.delete('/api/admin_booths/:block/:number', (req, res) => {
+  const { block, number } = req.params;
+  const query = 'DELETE FROM Booth WHERE Block = ? AND Number = ?';
+  db.query(query, [block, number], (err, result) => {
+    if (err) {
+      console.error('Error deleting booth:', err);
+      return res.status(500).json({ error: 'Failed to delete booth' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Booth not found' });
+    }
+    res.json({ message: 'Booth deleted successfully' });
+  });
+});
+
+// POST a new booth
+app.post('/api/admin_booths', (req, res) => {
+  const { block, number, date, time } = req.body;
+  const query = 'INSERT INTO Booth (Block, Number, date, time, ReserveStatus) VALUES (?, ?, ?, ?, ?)';
+  db.query(query, [block, number, date, time, false], (err, result) => {
+    if (err) {
+      console.error('Error adding booth:', err);
+      return res.status(500).json({ error: 'Failed to add booth' });
+    }
+    res.json({ message: 'Booth added successfully' });
+  });
+});
 
 
 
@@ -740,6 +781,7 @@ app.get('/api/student/:studentId/applications', (req, res) => {
   e.Name AS EmployerName,
   f.comment,
   b.Block,
+  b.time,
   b.Number
 FROM
   CandidateForm c
@@ -1188,6 +1230,58 @@ app.post('/api/booths/:block/:number/employeer_reserve', (req, res) => {
   });
 });
 //-----------------------------------------------------------------------------------------
+
+
+//------------------------------------------------------Employer Profile---------------------------------------------------------------------
+// Get employer profile
+app.get('/employer_profile/:employerId', (req, res) => {
+  const employerId = req.params.employerId;
+  const query = `SELECT Name, email, CompanyDesp AS companyType, CompanyName FROM Employeer WHERE EmpID = ?`;
+
+  db.query(query, [employerId], (err, result) => {
+    if (err) {
+      console.error('Error fetching employer profile:', err);
+      return res.status(500).json({ error: 'Error fetching employer profile' });
+    }
+
+    if (result.length > 0) {
+      const employer = result[0];
+      res.json({
+        name: employer.Name,
+        email: employer.email,
+        companyType: employer.companyType || '',
+        companyName: employer.CompanyName || '',
+      });
+    } else {
+      res.status(404).json({ error: 'Employer not found' });
+    }
+  });
+});
+
+
+app.put('/employer_profile/:employerId', (req, res) => {
+  const employerId = req.params.employerId;
+  const { name, email, companyType, companyName } = req.body;
+
+  const query = `UPDATE Employeer SET Name = ?, email = ?, CompanyDesp = ?, CompanyName = ? WHERE EmpID = ?`;
+  const values = [name, email, companyType, companyName, employerId];
+
+  db.query(query, values, (err, result) => {
+    if (err) {
+      console.error('Error updating employer profile:', err);
+      return res.status(500).json({ error: 'Error updating employer profile' });
+    }
+
+    if (result.affectedRows > 0) {
+      res.json({ message: 'Employer profile updated successfully' });
+    } else {
+      res.status(404).json({ error: 'Employer not found' });
+    }
+  });
+});
+
+
+
 
 app.listen(8081, () => {
   console.log('Server is running on port 8081')

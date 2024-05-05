@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Sidebar from '../../components/Sidebar'
 import './studentstyling/student_jobstatus.css'
 import axios from 'axios'
+
 const JobStatus = () => {
   const [student, setStudent] = useState(null)
 
@@ -20,8 +21,8 @@ const JobStatus = () => {
     <>
       <Sidebar role={'student'} />
       {student ? (
-        <div className='table-container'>
-          <table>
+        <div className='student_jobstatus-table-container'>
+          <table className='student_jobstatus-table'>
             <thead>
               <tr>
                 <th>Job Title</th>
@@ -29,6 +30,7 @@ const JobStatus = () => {
                 <th>Company Name</th>
                 <th>Employer Name</th>
                 <th>Booth</th>
+                <th>Booth Time</th>
                 <th>Feedback</th>
               </tr>
             </thead>
@@ -43,6 +45,7 @@ const JobStatus = () => {
                     ? `${student.Block} / ${student.Number}`
                     : '-'}
                 </td>
+                <td>{student.time || '-'}</td>
                 <td>{student.comment || '-'}</td>
               </tr>
             </tbody>
