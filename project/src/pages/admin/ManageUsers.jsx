@@ -18,7 +18,9 @@ const ManageUsers = () => {
       const students = await studentResponse.json()
 
       // Fetch employers
-      const employerResponse = await fetch('http://localhost:8081/api/employers')
+      const employerResponse = await fetch(
+        'http://localhost:8081/api/employers'
+      )
       const employers = await employerResponse.json()
 
       setUsers({ students, employers })
@@ -46,56 +48,68 @@ const ManageUsers = () => {
   const handleDeleteStudent = async studentId => {
     try {
       // Delete related data from other tables
-      await fetch(`http://localhost:8081/api/delete-student-related-data/${studentId}`, {
-        method: 'DELETE'
-      });
-  
+      await fetch(
+        `http://localhost:8081/api/delete-student-related-data/${studentId}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
       // Delete the student
-      const response = await fetch(`http://localhost:8081/api/students/${studentId}`, {
-        method: 'DELETE'
-      });
-  
+      const response = await fetch(
+        `http://localhost:8081/api/students/${studentId}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
       if (response.ok) {
         setUsers(prevUsers => ({
           ...prevUsers,
           students: prevUsers.students.filter(
             student => student.StdID !== studentId
           )
-        }));
+        }))
       } else {
-        console.error('Error deleting student');
+        console.error('Error deleting student')
       }
     } catch (error) {
-      console.error('Error deleting student:', error);
+      console.error('Error deleting student:', error)
     }
-  };
+  }
 
   const handleDeleteEmployer = async employerId => {
     try {
       // Delete related data from other tables
-      await fetch(`http://localhost:8081/api/delete-employer-related-data/${employerId}`, {
-        method: 'DELETE'
-      });
-  
+      await fetch(
+        `http://localhost:8081/api/delete-employer-related-data/${employerId}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
       // Delete the employer
-      const response = await fetch(`http://localhost:8081/api/employers/${employerId}`, {
-        method: 'DELETE'
-      });
-  
+      const response = await fetch(
+        `http://localhost:8081/api/employers/${employerId}`,
+        {
+          method: 'DELETE'
+        }
+      )
+
       if (response.ok) {
         setUsers(prevUsers => ({
           ...prevUsers,
           employers: prevUsers.employers.filter(
             employer => employer.EmpID !== employerId
           )
-        }));
+        }))
       } else {
-        console.error('Error deleting employer');
+        console.error('Error deleting employer')
       }
     } catch (error) {
-      console.error('Error deleting employer:', error);
+      console.error('Error deleting employer:', error)
     }
-  };
+  }
 
   return (
     <>
@@ -104,22 +118,21 @@ const ManageUsers = () => {
       </div>
       <div className='content'>
         <h1>Manage Users</h1>
-      <h1>Manage Students</h1>
-        <div className="search-container">
-          <div className="search-bar">
+        <h1>Manage Students</h1>
+        <div className='search-container'>
+          <div className='search-bar'>
             <input
-              type="text"
-              placeholder="Search students"
+              type='text'
+              placeholder='Search students'
               value={studentSearchTerm}
               onChange={handleStudentSearch}
             />
-            <button className="search-btn">Search</button>
+            <button className='search-btn'>Search</button>
           </div>
         </div>
 
-        
-        <div className="table-container">
-          <table className='table table-striped table-bordered table-hover'>
+        <div className='admin-table'>
+          <table className='admin_manage-users-table'>
             <thead>
               <tr>
                 <th>Name</th>
@@ -145,22 +158,21 @@ const ManageUsers = () => {
             </tbody>
           </table>
         </div>
+
         <h1>Manage Employers</h1>
-        <div className="search-container">
-          <div className="search-bar">
+        <div className='search-container'>
+          <div className='search-bar'>
             <input
-              type="text"
-              placeholder="Search employers"
+              type='text'
+              placeholder='Search employers'
               value={employerSearchTerm}
               onChange={handleEmployerSearch}
             />
-            <button className="search-btn">Search</button>
+            <button className='search-btn'>Search</button>
           </div>
         </div>
-
-        
-        <div className="table-container">
-          <table className='table table-striped table-bordered table-hover'>
+        <div className='admin-table'>
+          <table className='admin_manage-users-table'>
             <thead>
               <tr>
                 <th>Name</th>
@@ -170,7 +182,7 @@ const ManageUsers = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredEmployers.map((employer) => (
+              {filteredEmployers.map(employer => (
                 <tr key={employer.EmpID}>
                   <td>{employer.Name}</td>
                   <td>{employer.email}</td>
