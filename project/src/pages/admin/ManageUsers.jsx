@@ -1,153 +1,100 @@
-import React, { useState, useEffect } from 'react';
-import Sidebar from '../../components/Sidebar';
-import { Table, Form, InputGroup, Button } from 'react-bootstrap';
+import React, { useState, useEffect } from 'react'
+import Sidebar from '../../components/Sidebar'
+import '../admin/adminstyling/admin_manageuser.css'
 
-
-// const ManageUsers = () => {
-//   const [users, setUsers] = useState([]);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [filterType, setFilterType] = useState('all');
-
-//   useEffect(() => {
-//     // Fetch users from the database
-//     fetchUsers();
-//   }, []);
-
-//   const fetchUsers = async () => {
-//     try {
-//       const response = await db.get('/users');
-//       setUsers(response.data);
-//     } catch (error) {
-//       console.error('Error fetching users:', error);
-//     }
-//   };
-
-//   const handleSearch = (e) => {
-//     setSearchTerm(e.target.value);
-//   };
-
-//   const handleFilterTypeChange = (e) => {
-//     setFilterType(e.target.value);
-//   };
-
-//   const filteredUsers = users.filter((user) => {
-//     if (filterType === 'all') {
-//       return user.name.toLowerCase().includes(searchTerm.toLowerCase());
-//     } else {
-//       return user.role === filterType && user.name.toLowerCase().includes(searchTerm.toLowerCase());
-//     }
-//   });
-
-//   const handleEdit = (userId) => {
-//     // Logic to handle user edit
-//     console.log('Editing user:', userId);
-//   };
-
-//   const handleDelete = (userId) => {
-//     // Logic to handle user deletion
-//     console.log('Deleting user:', userId);
-//   };
-
-//   return (
-//     <>
-//       <div>
-//         <Sidebar role={'admin'} />
-//       </div>
-//       <div className="content">
-//         <h1>Manage Users</h1>
-//         <Form.Group controlId="filterType">
-//           <Form.Label>Filter by:</Form.Label>
-//           <Form.Control as="select" value={filterType} onChange={handleFilterTypeChange}>
-//             <option value="all">All</option>
-//             <option value="employer">Employer</option>
-//             <option value="student">Student</option>
-//           </Form.Control>
-//         </Form.Group>
-//         <InputGroup className="mb-3">
-//           <Form.Control
-//             placeholder="Search users"
-//             aria-label="Search users"
-//             value={searchTerm}
-//             onChange={handleSearch}
-//           />
-//           <InputGroup.Append>
-//             <Button variant="outline-secondary">Search</Button>
-//           </InputGroup.Append>
-//         </InputGroup>
-//         <Table striped bordered hover>
-//           <thead>
-//             <tr>
-//               <th>Name</th>
-//               <th>Email</th>
-//               <th>Role</th>
-//               <th>Actions</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {filteredUsers.map((user) => (
-//               <tr key={user.id}>
-//                 <td>{user.name}</td>
-//                 <td>{user.email}</td>
-//                 <td>{user.role}</td>
-//                 <td>
-//                   <Button variant="primary" onClick={() => handleEdit(user.id)}>
-//                     Edit
-//                   </Button>
-//                   <Button variant="danger" onClick={() => handleDelete(user.id)}>
-//                     Delete
-//                   </Button>
-//                 </td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </Table>
-//       </div>
-//     </>
-//   );
-// };
 const ManageUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterType, setFilterType] = useState('all');
+  const [users, setUsers] = useState({ students: [], employers: [] })
+  const [studentSearchTerm, setStudentSearchTerm] = useState('')
+  const [employerSearchTerm, setEmployerSearchTerm] = useState('')
 
   useEffect(() => {
-    // Fetch users from the database
-    fetchUsers();
-  }, []);
+    fetchUsers()
+  }, [])
 
   const fetchUsers = async () => {
     try {
-      const response = await db.get('/');
-      setUsers(response.data.users);
+      // Fetch students
+      const studentResponse = await fetch('http://localhost:8081/api/students')
+      const students = await studentResponse.json()
+
+      // Fetch employers
+      const employerResponse = await fetch('http://localhost:8081/api/employers')
+      const employers = await employerResponse.json()
+
+      setUsers({ students, employers })
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error('Error fetching users:', error)
+    }
+  }
+
+  const handleStudentSearch = e => {
+    setStudentSearchTerm(e.target.value)
+  }
+
+  const handleEmployerSearch = e => {
+    setEmployerSearchTerm(e.target.value)
+  }
+
+  const filteredStudents = users.students.filter(student =>
+    student.Name.toLowerCase().includes(studentSearchTerm.toLowerCase())
+  )
+
+  const filteredEmployers = users.employers.filter(employer =>
+    employer.Name.toLowerCase().includes(employerSearchTerm.toLowerCase())
+  )
+
+  const handleDeleteStudent = async studentId => {
+    try {
+      // Delete related data from other tables
+      await fetch(`http://localhost:8081/api/delete-student-related-data/${studentId}`, {
+        method: 'DELETE'
+      });
+  
+      // Delete the student
+      const response = await fetch(`http://localhost:8081/api/students/${studentId}`, {
+        method: 'DELETE'
+      });
+  
+      if (response.ok) {
+        setUsers(prevUsers => ({
+          ...prevUsers,
+          students: prevUsers.students.filter(
+            student => student.StdID !== studentId
+          )
+        }));
+      } else {
+        console.error('Error deleting student');
+      }
+    } catch (error) {
+      console.error('Error deleting student:', error);
     }
   };
 
-  const handleSearch = (e) => {
-    setSearchTerm(e.target.value);
-  };
-
-  const handleFilterTypeChange = (e) => {
-    setFilterType(e.target.value);
-  };
-
-  const filteredUsers = users.filter((user) => {
-    if (filterType === 'all') {
-      return user.name.toLowerCase().includes(searchTerm.toLowerCase());
-    } else {
-      return user.role === filterType && user.name.toLowerCase().includes(searchTerm.toLowerCase());
+  const handleDeleteEmployer = async employerId => {
+    try {
+      // Delete related data from other tables
+      await fetch(`http://localhost:8081/api/delete-employer-related-data/${employerId}`, {
+        method: 'DELETE'
+      });
+  
+      // Delete the employer
+      const response = await fetch(`http://localhost:8081/api/employers/${employerId}`, {
+        method: 'DELETE'
+      });
+  
+      if (response.ok) {
+        setUsers(prevUsers => ({
+          ...prevUsers,
+          employers: prevUsers.employers.filter(
+            employer => employer.EmpID !== employerId
+          )
+        }));
+      } else {
+        console.error('Error deleting employer');
+      }
+    } catch (error) {
+      console.error('Error deleting employer:', error);
     }
-  });
-
-  const handleEdit = (userId) => {
-    // Logic to handle user edit
-    console.log('Editing user:', userId);
-  };
-
-  const handleDelete = (userId) => {
-    // Logic to handle user deletion
-    console.log('Deleting user:', userId);
   };
 
   return (
@@ -155,57 +102,95 @@ const ManageUsers = () => {
       <div>
         <Sidebar role={'admin'} />
       </div>
-      <div className="content">
+      <div className='content'>
         <h1>Manage Users</h1>
-        <Form.Group controlId="filterType">
-          <Form.Label>Filter by:</Form.Label>
-          <Form.Control as="select" value={filterType} onChange={handleFilterTypeChange}>
-            <option value="all">All</option>
-            <option value="employer">Employer</option>
-            <option value="student">Student</option>
-          </Form.Control>
-        </Form.Group>
-        <InputGroup className="mb-3">
-          <Form.Control
-            placeholder="Search users"
-            aria-label="Search users"
-            value={searchTerm}
-            onChange={handleSearch}
-          />
-          <InputGroup.Append>
-            <Button variant="outline-secondary">Search</Button>
-          </InputGroup.Append>
-        </InputGroup>
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr key={user.id}>
-                <td>{user.name}</td>
-                <td>{user.email}</td>
-                <td>{user.role}</td>
-                <td>
-                  <Button variant="primary" onClick={() => handleEdit(user.id)}>
-                    Edit
-                  </Button>
-                  <Button variant="danger" onClick={() => handleDelete(user.id)}>
-                    Delete
-                  </Button>
-                </td>
+      <h1>Manage Students</h1>
+        <div className="search-container">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search students"
+              value={studentSearchTerm}
+              onChange={handleStudentSearch}
+            />
+            <button className="search-btn">Search</button>
+          </div>
+        </div>
+
+        
+        <div className="table-container">
+          <table className='table table-striped table-bordered table-hover'>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
+            </thead>
+            <tbody>
+              {filteredStudents.map(student => (
+                <tr key={student.StdID}>
+                  <td>{student.Name}</td>
+                  <td>{student.email}</td>
+                  <td>
+                    <button
+                      className='btn-danger'
+                      onClick={() => handleDeleteStudent(student.StdID)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <h1>Manage Employers</h1>
+        <div className="search-container">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Search employers"
+              value={employerSearchTerm}
+              onChange={handleEmployerSearch}
+            />
+            <button className="search-btn">Search</button>
+          </div>
+        </div>
+
+        
+        <div className="table-container">
+          <table className='table table-striped table-bordered table-hover'>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Company Name</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredEmployers.map((employer) => (
+                <tr key={employer.EmpID}>
+                  <td>{employer.Name}</td>
+                  <td>{employer.email}</td>
+                  <td>{employer.CompanyName}</td>
+                  <td>
+                    <button
+                      className='btn-danger'
+                      onClick={() => handleDeleteEmployer(employer.EmpID)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default ManageUsers;
+export default ManageUsers

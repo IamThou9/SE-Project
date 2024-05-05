@@ -24,6 +24,7 @@ CREATE TABLE Assign_Interview (
     Employeer_EmpID int  NOT NULL,
     Student_StdID int  NOT NULL,
     Interview_InterviewID int  NOT NULL,
+    Complete_Status boolean DEFAULT FALSE,
     CONSTRAINT Assign_Interview_pk PRIMARY KEY (Employeer_EmpID,Student_StdID,Interview_InterviewID)
 );
 
@@ -40,13 +41,17 @@ CREATE TABLE Booth (
 
 -- Table: CandidateForm
 CREATE TABLE CandidateForm (
-    CadID int  NOT NULL AUTO_INCREMENT,
-    Name varchar(100)  NOT NULL,
-    email varchar(100)  NOT NULL,
-    resume blob  NOT NULL,
-    ApplicationForm_ApplicationID int  NOT NULL,
-    CONSTRAINT CandidateForm_pk PRIMARY KEY (CadID)
-)AUTO_INCREMENT=1;
+    CadID int NOT NULL AUTO_INCREMENT,
+    Name varchar(100) NOT NULL,
+    email varchar(100) NOT NULL,
+    resume blob NOT NULL,
+    ApplicationForm_ApplicationID int NOT NULL,
+    studentID int NOT NULL,
+    approved_status boolean DEFAULT FALSE,
+    CONSTRAINT CandidateForm_pk PRIMARY KEY (CadID),
+    CONSTRAINT CandidateForm_fk1 FOREIGN KEY (studentID) REFERENCES Student(StdID),
+    CONSTRAINT CandidateForm_fk2 FOREIGN KEY (ApplicationForm_ApplicationID) REFERENCES ApplicationForm(ApplicationID)
+);
 
 -- Table: Comments
 CREATE TABLE Comments (
@@ -89,6 +94,7 @@ CREATE TABLE Jobs (
     StartDate datetime  NOT NULL,
     Status bool  NOT NULL,
     Employeer_EmpID int  NOT NULL,
+    JobDescription varchar(200) NULL,
     CONSTRAINT Jobs_pk PRIMARY KEY (OfferID)
 )AUTO_INCREMENT=100;
 
