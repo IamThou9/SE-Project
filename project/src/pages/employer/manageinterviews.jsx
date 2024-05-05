@@ -139,6 +139,14 @@ const ManageInterviews = () => {
   };
   const handleFeedbackSubmit = async () => {
    handleUpdateInterview();
+
+
+  //Check if feedback is provided
+  if(feedback===''){
+    alert('Please provide feedback');
+    return;
+  }
+  
    const userInfo = JSON.parse(localStorage.getItem('user'));
    if (userInfo) {
      const employerId = userInfo.id;
