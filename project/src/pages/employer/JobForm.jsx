@@ -40,6 +40,14 @@ const JobForm = ({ onSubmit }) => {
   };
 
   const handleChange = (e) => {
+
+    //Check if the input is a number and greater than 0
+    if (e.target.name === 'salary' && e.target.value < 0) {
+      alert('Salary must be a positive number');
+      e.target.value = '';
+      return;
+    }
+
     setNewJob({ ...newJob, [e.target.name]: e.target.value });
   };
 
